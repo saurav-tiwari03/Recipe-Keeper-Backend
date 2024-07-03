@@ -16,7 +16,6 @@ app.listen(PORT,() => {
 
 
 app.get('/',(req,res)  => {
-  res.send(`<title>Recipe Keeper Backend</title>`)
   res.status(200).json({
     message:'Welcome to Recipe-Keeper Backend'
   })
