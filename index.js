@@ -10,7 +10,7 @@ const router = require('./routes/route')
 
 const PORT = process.env.PORT || 8800
 app.listen(PORT,() => {
-  console.log(`listening on ${PORT}`);
+  console.log(`Server started on ${PORT}`);
   connect();
 })
 
