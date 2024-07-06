@@ -29,7 +29,12 @@ exports.signup = async(req,res ) => {
     let payload = {
       id:user._id,
       name:user.name,
-      email:user.email
+      email:user.email,
+      userName:user.userName,
+      bio:user.bio,
+      recipes:user.recipes,
+      upVotes:user.upVotes,
+      rating:user.rating
     }
     let token = jwt.sign(payload,"saurav",{expiresIn:'1d'});
     res.status(200).json({
@@ -63,7 +68,12 @@ exports.login = async(req,res) => {
       const payload = {
         id:user._id,
         name:user.name,
-        email:user.email
+        email:user.email,
+        userName:user.userName,
+        bio:user.bio,
+        recipes:user.recipes,
+        upVotes:user.upVotes,
+        rating:user.rating
       }
       let token = jwt.sign(payload,"saurav",{expiresIn:'1d'})
       console.log('User logged in successfully')
