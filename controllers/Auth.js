@@ -97,3 +97,53 @@ exports.login = async(req,res) => {
     })
   }
 }
+
+exports.updateProfile = async(req,res) => {
+  try {
+    const {id} = req.params
+    const {name,userName,bio} = req.body
+    const user = await User.findById(id);
+    if(!user) {
+      throw new Error('User not found')
+    }
+    user.name = name;
+    user.userName = userName;
+    user.bio = bio;
+    await user.save();
+    res.status(200).json({
+      success: true,  
+      message: 'User prfile updated successfully'
+    })
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      message: 'Unable to update user prfile '
+    })
+  }
+}
+
+exports.getUserByUserName = async(req,res) => {
+  try {
+    const {userName} = req.params;
+    if(!userName) {
+      throw new Error('Unable to get userName')
+    }
+    const user = await User.findOne({userName});
+    if(!user) {
+      throw new Error('User not found')
+    }
+    res.status(200).json({
+      success: true,
+      user: user,
+      message:'User data fetced successfully'
+    })
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    })
+  }
+}
