@@ -10,8 +10,13 @@ const recipeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  tags:[{
+    type:String,
+    required: true,
+  }],
   imageUrl: {
     type: String,
+    // required: true,
   },
   ingredients: {
     type: mongoose.Schema.Types.ObjectId,

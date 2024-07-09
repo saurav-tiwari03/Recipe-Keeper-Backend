@@ -73,7 +73,8 @@ exports.login = async(req,res) => {
         bio:user.bio,
         recipes:user.recipes,
         upVotes:user.upVotes,
-        rating:user.rating
+        rating:user.rating,
+        imageUrl:user.imageUrl
       }
       let token = jwt.sign(payload,"saurav",{expiresIn:'1d'})
       console.log('User logged in successfully')

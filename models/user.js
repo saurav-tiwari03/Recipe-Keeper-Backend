@@ -18,6 +18,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  imageUrl:{
+    type: String,
+  },
   bio: {
     type: String,
     default: "",

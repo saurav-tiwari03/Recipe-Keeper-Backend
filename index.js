@@ -1,17 +1,27 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-app.use(express.json());
-app.use(cors())
-
 require('dotenv').config();
 const {connect} = require('./config/database')
 const router = require('./routes/route')
+const cloudinary = require('./config/cloudinary');
+const fileUpload = require('express-fileupload');
+
+
+//Middleware
+app.use(express.json());
+app.use(cors())
+app.use(fileUpload({
+  useTempFiles : true,
+  tempFileDir : '/tmp/'
+}));
 
 const PORT = process.env.PORT || 8800
+
 app.listen(PORT,() => {
   console.log(`Server started on ${PORT}`);
   connect();
+  cloudinary.cloudinaryConnect();
 })
 
 

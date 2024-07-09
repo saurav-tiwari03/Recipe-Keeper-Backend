@@ -4,7 +4,7 @@ const User = require("./../models/user");
 
 exports.createRecipe = async (req, res) => {
   try {
-    const { recipeBy, title, ingredients } = req.body;
+    const { recipeBy, title,tags, ingredients } = req.body;
     if (!recipeBy || !title || !ingredients) {
       throw new Error("Error in recipe fields");
     }
@@ -15,6 +15,7 @@ exports.createRecipe = async (req, res) => {
     const recipe = await Recipe.create({
       recipeBy: recipeBy,
       title: title,
+      tags:tags,
       ingredients: ingredientsDoc._id,
     });
 
@@ -98,6 +99,24 @@ exports.upVoteRecipe = async (req, res) => {
       success: false,
       error: error.message,
       message: "Erro while upvoting a recipe",
+    });
+  }
+};
+
+exports.getRecipes = async (req, res) => {
+  try {
+    const recipes = await Recipe.find({});
+    console.log(recipes);
+    res.status(200).json({
+      success: true,
+      recipes: recipes,
+      message: "All recipes fetched successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Error while fetching recipes",
     });
   }
 };
