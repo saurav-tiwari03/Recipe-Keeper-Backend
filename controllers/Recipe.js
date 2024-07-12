@@ -106,7 +106,7 @@ exports.upVoteRecipe = async (req, res) => {
 exports.getRecipes = async (req, res) => {
   try {
     const recipes = await Recipe.find({});
-    console.log(recipes);
+    // console.log(recipes);
     res.status(200).json({
       success: true,
       recipes: recipes,
@@ -120,3 +120,24 @@ exports.getRecipes = async (req, res) => {
     });
   }
 };
+
+exports.getIngredients = async(req, res) => {
+  try {
+    const {id} = req.params;
+    const ingredient = await Ingredients.findById(id);
+    if (!ingredient) {
+      throw new Error("Ingredient not found");
+    }
+    res.status(200).json({
+      success: true,
+      ingredients: ingredient,
+      message: "Ingredient fetched successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Error while fetching ingredient",
+    });
+  }
+}
