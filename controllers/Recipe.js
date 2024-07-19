@@ -1,22 +1,50 @@
 const Recipe = require("../models/recipe");
-const Ingredients = require("../models/ingredients");
 const User = require("./../models/user");
+const cloudinary = require('cloudinary').v2;
+
+function isFileSupported (type,supportedTypes) {
+  return supportedTypes.includes(type)
+}
+
+async function uploadFileToCloudinary (file,folder){
+  const options = {folder}
+  return await cloudinary.uploader.upload(file.tempFilePath,options);
+}
 
 exports.createRecipe = async (req, res) => {
   try {
     const { recipeBy, title,tags, ingredients } = req.body;
+    const file = req.files.recipeImg;
+    let parsedTags, parsedIngredients;
+    try {
+      parsedTags = JSON.parse(tags)
+      parsedIngredients = JSON.parse(ingredients);
+    } catch (e) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid ingredients format',
+      });
+    }
     if (!recipeBy || !title || !ingredients) {
       throw new Error("Error in recipe fields");
     }
+    const fileType = file.name.split('.').pop().toLowerCase();
+    const supportedTypes = ["jpg", "png", "jpeg"];
+    if (!isFileSupported(fileType, supportedTypes)) {
+      return res.status(400).json({
+        success: false,
+        message: 'File format not supported'
+      });
+    }
 
-    const ingredientsDoc = new Ingredients({ ingredient: ingredients });
-    await ingredientsDoc.save();
-
+    const response = await uploadFileToCloudinary(file, "RecipeKeeperProject");
+    console.log(response);
     const recipe = await Recipe.create({
       recipeBy: recipeBy,
       title: title,
-      tags:tags,
-      ingredients: ingredientsDoc._id,
+      tags:parsedTags,
+      imageUrl:response.secure_url,
+      ingredients: parsedIngredients
     });
 
     console.log(recipe);
@@ -33,7 +61,7 @@ exports.createRecipe = async (req, res) => {
       message: "Recipe created successfully",
     });
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
     res.status(500).json({
       success: false,
       error: error.message,
@@ -82,12 +110,11 @@ exports.upVoteRecipe = async (req, res) => {
       throw new Error("User has already upvoted this recipe");
     }
     recipe.upVotes.push(userId);
-    await recipe.save();
-
+    await recipe.save()
     const Votes = user.upVotes;
     user.upVotes = Votes + 1;
     user.save();
-
+    console.log("Recipe upvoted successfully")
     res.status(200).json({
       success: true,
       message: `UpVotes for ${recipe.title}`,
@@ -121,23 +148,40 @@ exports.getRecipes = async (req, res) => {
   }
 };
 
-exports.getIngredients = async(req, res) => {
+exports.deleteRecipe = async (req, res) => {
   try {
-    const {id} = req.params;
-    const ingredient = await Ingredients.findById(id);
-    if (!ingredient) {
-      throw new Error("Ingredient not found");
+    const { id } = req.params;
+
+    const recipe = await Recipe.findById(id);
+    if (!recipe) {
+      return res.status(404).json({
+        success: false,
+        message: "Recipe not found",
+      });
     }
-    res.status(200).json({
+
+    const user = await User.findById(recipe.recipeBy);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    await Recipe.findByIdAndDelete(id);
+
+    user.recipes.pull(id); 
+    await user.save();
+
+    res.status(200).json({  
       success: true,
-      ingredients: ingredient,
-      message: "Ingredient fetched successfully",
+      message: "Recipe deleted successfully",
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({
       success: false,
-      message: "Error while fetching ingredient",
+      message: "Unable to delete recipe",
     });
   }
-}
+};
