@@ -185,3 +185,22 @@ exports.deleteRecipe = async (req, res) => {
     });
   }
 };
+
+exports.getRecipeById = async(req,res) => {
+  try {
+    const { id } = req.params;
+    const recipe = await Recipe.findById(id);
+    // console.log(recipe);
+    res.status(200).json({
+      success: true,
+      recipe: recipe,
+      message: "Recipe fetched successfully",
+    })
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Unable to fetch recipe",
+    })
+  }
+}

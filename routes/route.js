@@ -23,12 +23,14 @@ const {
   getRecipeByUser,
   upVoteRecipe,
   getRecipes,
-  deleteRecipe
+  deleteRecipe,
+  getRecipeById
 } = require("./../controllers/Recipe");
 router.post("/recipe/create", createRecipe);
 router.post("/recipe/upVote", upVoteRecipe);
 router.get("/recipe/get/:id", getRecipeByUser);
 router.get("/recipes",getRecipes);
 router.delete('/recipe/delete/:id',deleteRecipe)
+router.get('/recipes/:id',getRecipeById)
 
 module.exports = router;
