@@ -148,3 +148,30 @@ exports.getUserByUserName = async(req,res) => {
     })
   }
 }
+
+exports.getUserById = async(req,res) => {
+  try {
+    const id = req.params.id
+    const data = await User.findById(id)
+    const user = {
+      username:data.userName,
+      name: data.name,
+      email: data.email,
+      image: data.imageUrl
+    }
+    if(!user) {
+      throw new Error('User not found')
+    }
+    res.status(200).json({
+      success: true,
+      message: 'User data fetched successfully',
+      user: user
+    })
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    })
+  }
+}

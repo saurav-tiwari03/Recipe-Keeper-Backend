@@ -7,11 +7,13 @@ const {
   signup,
   updateProfile,
   getUserByUserName,
+  getUserById
 } = require("./../controllers/Auth");
 router.post("/login", login);
 router.post("/signup", signup);
 router.put("/user/updateProfile/:id", updateProfile);
 router.get("/user/:userName", getUserByUserName);
+router.get("/user/get/:id",getUserById)
 
 //File upload
 const {profileUpload} = require("../controllers/FileUpload");
