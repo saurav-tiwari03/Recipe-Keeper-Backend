@@ -175,3 +175,21 @@ exports.getUserById = async(req,res) => {
     })
   }
 }
+
+exports.getAllUser = async (req, res) => {
+  try {
+    const allUsers = await User.find({}, { userName: 1 });
+    const usernames = allUsers.map(user => user.userName);
+    res.status(200).json({
+      success: true,
+      message: 'All usernames fetched successfully',
+      usernames: usernames
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
